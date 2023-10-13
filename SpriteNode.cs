@@ -2,17 +2,17 @@ using Godot;
 
 namespace Test;
 
-public partial class NumberLabel : Node2D
+public partial class SpriteNode : Node2D
 {
 	private static readonly Vector2 Movement = new(0, -80);
 	private double Duration { get; set; } = 3f;
 	
-	private Label Label { get; set; }
-	
+	private Sprite2D Sprite2D { get; set; }
+    
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		Label = GetNode<Label>("%Label");
+		Sprite2D = GetNode<Sprite2D>("%Sprite2D");
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

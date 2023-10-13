@@ -6,15 +6,21 @@ namespace Test;
 public partial class Main : Node2D
 {
 	public const bool InstantiateOnMainThread = false;
-	private static readonly Vector2 InitialPosition = new(250, 250);
+	public const bool SkipLabel = false;
+	
+    
+	private static readonly Vector2 InitialPosition = new(50, 350);
+	private static readonly Vector2 InitialPosition2 = new(350, 350);
 	
 	private PackedScene _packedScene;
+	private PackedScene _packedScene2;
 	private double Timer { get; set; } = 2f;
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		_packedScene = GD.Load<PackedScene>("res://NumberLabel.tscn");
+		_packedScene2 = GD.Load<PackedScene>("res://SpriteNode.tscn");
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -26,17 +32,31 @@ public partial class Main : Node2D
 
 		if (InstantiateOnMainThread)
 		{
-			var node = _packedScene.Instantiate<NumberLabel>();
-			node.Position = InitialPosition;
-			AddChild(node);
+			if (!SkipLabel)
+			{
+				var node = _packedScene.Instantiate<NumberLabel>();
+				node.Position = InitialPosition;
+				AddChild(node);	
+			}
+			
+			var node2 = _packedScene2.Instantiate<SpriteNode>();
+			node2.Position = InitialPosition2;
+			CallDeferred(Node.MethodName.AddChild, node2);
 		}
 		else
 		{
 			Task.Run(() =>
 			{
-				var node = _packedScene.Instantiate<NumberLabel>();
-				node.Position = InitialPosition;
-				CallDeferred(Node.MethodName.AddChild, node);
+				if (!SkipLabel)
+				{
+					var node = _packedScene.Instantiate<NumberLabel>();
+					node.Position = InitialPosition;
+					CallDeferred(Node.MethodName.AddChild, node);
+				}
+
+				var node2 = _packedScene2.Instantiate<SpriteNode>();
+				node2.Position = InitialPosition2;
+				CallDeferred(Node.MethodName.AddChild, node2);
 			});	
 		}
 	}
